@@ -2,7 +2,7 @@
 
 NVIDIA Jetson AGX Orin 64GB module, used as a dedicated model host. Memory is 64GB unified LPDDR5, shared by the CPU and the GPU. The GPU is Ampere, CUDA compute capability 8.7 (`sm_87`). The board is running L4T R36.4.7. The JetPack meta-package version was not recorded.
 
-One model is in service: [Ornith-1.5-35B-A3B Q4_K_M](models/ornith-1.5-35b-a3b-q4_k_m.md). Prompt-processing and generation tok/s have not been measured.
+One model is in service: [Ornith-1.5-35B-A3B Q4_K_M](models/ornith-1.5-35b-a3b-q4_k_m.md). `llama-bench` on 2026-10-26, without MTP: at KV depth 0 / 32K / 128K, prompt processing was 631 / 528 / 327 t/s and generation was 38.3 / 33.4 / 24.1 t/s. 256K depth was not measured.
 
 ## Hardware
 
@@ -32,7 +32,9 @@ Unified memory is the fit limit: there is no separate VRAM pool. Record how much
 
 | Model | Quant | Context | Backend | PP tok/s | TG tok/s | Memory | Date | Entry |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Ornith-1.5-35B-A3B | Q4_K_M | 262144 | CUDA | TODO | TODO | ~37 GB of 61 GB (`free -g`) | 2026-10-26 | [entry](models/ornith-1.5-35b-a3b-q4_k_m.md) |
+| Ornith-1.5-35B-A3B | Q4_K_M | 262144 | CUDA | 631 / 528 / 327 | 38.3 / 33.4 / 24.1 | ~37 GB of 61 GB (`free -g`) | 2026-10-26 | [entry](models/ornith-1.5-35b-a3b-q4_k_m.md) |
+
+PP and TG are `pp512` and `tg128` at KV depth 0 / 32K / 128K (`llama-bench -d 0,32768,131072`, server stopped, `nvpmodel -m 0` and `jetson_clocks`). This bench does not include `--spec-type draft-mtp`, so served generation speed may differ. 256K depth was not measured. The memory column is `free -g` while the server was up, not a bench reading.
 
 ## llama.cpp build
 
@@ -50,7 +52,9 @@ Recorded for the Ornith server, from the checkout on the board. CMake flags and 
 
 ## Benchmarks
 
-No tok/s yet. While the Ornith server was up, `free -g` reported about 37 GB used of 61 GB total, with swap unused. The model entry has the raw `free` output and a `llama-bench` command to fill in the TODO columns. Stop the server before running that bench.
+`llama-bench` on 2026-10-26, server stopped, after `nvpmodel -m 0` and `jetson_clocks`. Depth 0 / 32K / 128K: prompt processing 631 / 528 / 327 t/s, generation 38.3 / 33.4 / 24.1 t/s (`pp512` and `tg128`). `llama-bench` excludes MTP speculative decoding, so served generation with `--spec-type draft-mtp` may differ. 256K depth was not measured. The command and the raw table are in the [model entry](models/ornith-1.5-35b-a3b-q4_k_m.md).
+
+While the Ornith server was up, `free -g` reported about 37 GB used of 61 GB total, with swap unused.
 
 ## Notes and gotchas
 

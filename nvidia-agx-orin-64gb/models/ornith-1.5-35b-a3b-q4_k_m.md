@@ -1,6 +1,6 @@
 # Ornith-1.5-35B-A3B Q4_K_M
 
-Serving configuration observed on the AGX Orin on 2026-10-26. Prompt-processing and generation tok/s have not been measured.
+Serving configuration observed on the AGX Orin on 2026-10-26. `llama-bench` numbers from that day are below. The bench does not include MTP speculative decoding.
 
 - **Date:** 2026-10-26
 - **Hardware:** [nvidia-agx-orin-64gb](../README.md)
@@ -108,15 +108,43 @@ WantedBy=multi-user.target
 
 ## Benchmark
 
-Tok/s are TODO. The only measurement from this visit is memory while the server was already up.
+Measured 2026-10-26 with `llama-bench`. The server was stopped. Clocks were the same as the unit: `nvpmodel -m 0`, then `jetson_clocks`.
+
+Depth 0 / 32K / 128K: prompt processing 631 / 528 / 327 t/s, generation 38.3 / 33.4 / 24.1 t/s. Those are `pp512` and `tg128` at KV depth 0, 32768, and 131072, rounded from the table below. 256K depth was not measured. The server itself is started at context 262144.
+
+`llama-bench` does not run `--spec-type draft-mtp`. Served generation speed with MTP speculative decoding (`--spec-draft-n-max 2`) may differ from these tg128 numbers. The unit's `--metrics` endpoint is the place to record that; those rates are not here.
+
+Command:
+
+```
+~/src/llama.cpp/build/bin/llama-bench -m /mnt/data/models/Ornith-1.5-35B-A3B-Q4_K_M.gguf -ngl 99 -fa 1 -ctk f16 -ctv f16 -t 6 -b 2048 -ub 512 -p 512 -n 128 -d 0,32768,131072 -r 2
+```
+
+Raw output:
+
+```
+ggml_cuda_init: found 1 CUDA devices (Total VRAM: 62852 MiB): Device 0: Orin, compute capability 8.7, VMM: yes
+| model | size | params | backend | ngl | threads | fa | test | t/s |
+| qwen35moe 35B.A3B Q4_K - Medium | 20.35 GiB | 35.51 B | CUDA | 99 | 6 | 1 | pp512 | 631.11 ± 0.76 |
+| ... | tg128 | 38.26 ± 0.10 |
+| ... | pp512 @ d32768 | 528.05 ± 2.22 |
+| ... | tg128 @ d32768 | 33.38 ± 0.10 |
+| ... | pp512 @ d131072 | 326.88 ± 0.32 |
+| ... | tg128 @ d131072 | 24.05 ± 0.06 |
+build: 704485942 (10367)
+```
 
 | Date | Method | Prompt tokens | Gen tokens | PP tok/s | TG tok/s | Memory | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-10-26 | `free -g` while serving | TODO | TODO | TODO | TODO | ~37 GB used of 61 GB total | swap unused |
+| 2026-10-26 | `llama-bench -d 0 -r 2` | 512 | 128 | 631.11 ± 0.76 | 38.26 ± 0.10 | not measured during the bench | depth 0 |
+| 2026-10-26 | `llama-bench -d 32768 -r 2` | 512 | 128 | 528.05 ± 2.22 | 33.38 ± 0.10 | not measured during the bench | depth 32K |
+| 2026-10-26 | `llama-bench -d 131072 -r 2` | 512 | 128 | 326.88 ± 0.32 | 24.05 ± 0.06 | not measured during the bench | depth 128K |
+| 2026-10-26 | `free -g` while serving | | | | | ~37 GB used of 61 GB total | swap unused; separate from the bench |
 
-- **Fit:** the server was running with swap unused (0 of 30 GB). Per-layer offload was not logged, so this entry does not claim a layer count beyond the unit's `--n-gpu-layers 99`.
-- **Memory tool:** `free -g`
-- **Raw output:**
+- **Fit:** the bench loaded the model with `-ngl 99` on CUDA (`fa` 1, f16 KV). It reported one device, Orin, compute capability 8.7, total VRAM 62852 MiB. `build: 704485942 (10367)` matches the llama.cpp checkout in this entry. While the server was up, `free -g` reported about 37 GB used of 61 GB total and swap unused (0 of 30 GB). Per-layer offload was not logged.
+- **Memory tool:** `free -g` for the serving row. The bench did not print a resident-memory figure.
+
+`free -g` while serving:
 
 ```
                total        used        free      shared  buff/cache   available
@@ -125,26 +153,6 @@ Swap:             30           0          30
 ```
 
 `free -g` prints whole gigabytes. The module is specified as 64GB unified memory; the command reported 61 GB total and about 37 GB used while this server was up.
-
-`llama-bench` at this llama.cpp commit accepts the same model, offload, flash-attention, KV-cache, batch, and thread settings. It does not take `--spec-type`, so its generation number will not include the MTP speculative decoding the server is using. Stop `llama-server` first. The model is already resident, and a second copy will not fit in the memory `free` reported.
-
-```
-sudo systemctl stop llama-server
-
-/home/nvidia/src/llama.cpp/build/bin/llama-bench \
-  --model /mnt/data/models/Ornith-1.5-35B-A3B-Q4_K_M.gguf \
-  --n-gpu-layers 99 \
-  --flash-attn on \
-  --cache-type-k f16 \
-  --cache-type-v f16 \
-  --batch-size 2048 \
-  --ubatch-size 512 \
-  --threads 6 \
-  --n-prompt 512,8192,32768 \
-  --n-gen 128
-```
-
-Paste the table into this entry. For a figure closer to the served context, repeat with `--n-prompt` near 262144 only if the board has room for that KV cache after the server is stopped. The unit also passes `--metrics`, so a scrape of the live server is the measurement that includes MTP; those rates are not recorded here either.
 
 ## Client
 
