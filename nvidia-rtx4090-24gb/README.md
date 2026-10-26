@@ -1,6 +1,6 @@
 # NVIDIA GeForce RTX 4090 24GB
 
-NVIDIA GeForce RTX 4090 with 24GB GDDR6X. The GPU is Ada Lovelace, CUDA compute capability 8.9 (`sm_89`). The host machine, operating system, driver, and system RAM have not been recorded yet.
+NVIDIA GeForce RTX 4090 with 24GB GDDR6X on an Ubuntu machine with 64GB of system RAM. The GPU is Ada Lovelace, CUDA compute capability 8.9 (`sm_89`). The Ubuntu release, NVIDIA driver, and CUDA toolkit version have not been recorded yet.
 
 No models, builds, server configs, or benchmark numbers have been recorded yet.
 
@@ -12,8 +12,8 @@ No models, builds, server configs, or benchmark numbers have been recorded yet.
 | GPU | NVIDIA GeForce RTX 4090 (Ada Lovelace) |
 | VRAM | 24GB GDDR6X |
 | CUDA architecture | `sm_89` |
-| System RAM | not recorded yet |
-| OS | not recorded yet |
+| System RAM | 64GB |
+| OS | Ubuntu (release not recorded yet) |
 | Driver / CUDA | not recorded yet |
 | Backend | CUDA |
 | Role | not recorded yet |
@@ -40,7 +40,7 @@ None recorded yet. Add a file under `models/` from [`TEMPLATE.md`](../TEMPLATE.m
 
 Not recorded yet.
 
-When this is filled in, include the llama.cpp git commit, the CMake flags, `CMAKE_CUDA_ARCHITECTURES=89` (or the equivalent you passed), the CUDA toolkit and driver versions, the compiler, the OS, and the system RAM.
+When this is filled in, include the llama.cpp git commit, the CMake flags, `CMAKE_CUDA_ARCHITECTURES=89` (or the equivalent you passed), the CUDA toolkit and driver versions, the compiler, and the Ubuntu release and kernel.
 
 ## Server config
 
