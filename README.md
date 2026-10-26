@@ -26,13 +26,13 @@ Folder names are kebab-case: vendor, product, and the memory size or SKU that bo
 | Folder | Hardware | Memory | OS | Backends |
 | --- | --- | --- | --- | --- |
 | [`amd-rx7900xtx-24gb`](amd-rx7900xtx-24gb/README.md) | AMD Radeon RX 7900 XTX on a desktop | 24GB GDDR6, 64GB system RAM | Fedora | ROCm/HIP, Vulkan |
-| [`nvidia-agx-orin-64gb`](nvidia-agx-orin-64gb/README.md) | NVIDIA Jetson AGX Orin, dedicated model host | 64GB unified | JetPack | CUDA (`sm_87`) |
+| [`nvidia-agx-orin-64gb`](nvidia-agx-orin-64gb/README.md) | NVIDIA Jetson AGX Orin, dedicated model host | 64GB unified | L4T R36.4.7 | CUDA (`sm_87`) |
 | [`amd-strix-halo-392`](amd-strix-halo-392/README.md) | Lenovo Legion 7a, Ryzen AI Max+ 392, Radeon 8060S | 64GB unified LPDDR5X | Omarchy Linux | Vulkan, ROCm (`gfx1151`) |
 | [`nvidia-rtx4090-24gb`](nvidia-rtx4090-24gb/README.md) | NVIDIA GeForce RTX 4090 | 24GB GDDR6X, 64GB system RAM | Ubuntu | CUDA (`sm_89`) |
 
 Open the hardware README and match the OS, driver stack, and backend before trusting a number. Two machines with the same GPU and different system RAM, drivers, or offload settings will not match.
 
-Every folder above is a stub. No benchmark numbers have been recorded yet.
+The AGX Orin folder has one serving configuration, [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md). Prompt-processing and generation tok/s for that setup are still TODO. The other folders have no entries yet.
 
 ## Reproduce a setup
 

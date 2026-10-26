@@ -1,8 +1,8 @@
 # NVIDIA Jetson AGX Orin 64GB
 
-NVIDIA Jetson AGX Orin 64GB module, used as a dedicated model host. Memory is 64GB unified LPDDR5, shared by the CPU and the GPU. The GPU is Ampere, CUDA compute capability 8.7 (`sm_87`). The OS stack is NVIDIA JetPack.
+NVIDIA Jetson AGX Orin 64GB module, used as a dedicated model host. Memory is 64GB unified LPDDR5, shared by the CPU and the GPU. The GPU is Ampere, CUDA compute capability 8.7 (`sm_87`). The board is running L4T R36.4.7. The JetPack meta-package version was not recorded.
 
-No models, builds, server configs, or benchmark numbers have been recorded yet.
+One model is in service: [Ornith-1.5-35B-A3B Q4_K_M](models/ornith-1.5-35b-a3b-q4_k_m.md). Prompt-processing and generation tok/s have not been measured.
 
 ## Hardware
 
@@ -11,7 +11,7 @@ No models, builds, server configs, or benchmark numbers have been recorded yet.
 | Device | NVIDIA Jetson AGX Orin 64GB |
 | Memory | 64GB unified LPDDR5 |
 | GPU architecture | Ampere, CUDA `sm_87` |
-| OS | JetPack (release not recorded yet) |
+| OS | L4T R36.4.7 (JetPack package version not recorded) |
 | Backend | CUDA |
 | Role | Dedicated model host |
 
@@ -19,43 +19,44 @@ No models, builds, server configs, or benchmark numbers have been recorded yet.
 
 ```text
 nvidia-agx-orin-64gb/
-  README.md                 # this file
-  models/<model>-<quant>.md # one copy of TEMPLATE.md per model and quant
-  llama.cpp.md              # build commit, flags, and JetPack / CUDA versions
-  llama-server.service      # systemd unit, once one is in use
-  benchmarks/<run>.md       # optional pasted llama-bench output
+  README.md                         # this file
+  models/<model>-<quant>.md         # one copy of TEMPLATE.md per model and quant
+  configs/llama-server.service      # unit installed on the board
+  llama.cpp.md                      # optional: CMake flags, once captured
+  benchmarks/<run>.md               # optional pasted llama-bench output
 ```
 
 ## Models and quants
-
-None recorded yet. Add a file under `models/` from [`TEMPLATE.md`](../TEMPLATE.md) and link it here.
 
 Unified memory is the fit limit: there is no separate VRAM pool. Record how much of the 64GB the model, KV cache, and the rest of the system were using.
 
 | Model | Quant | Context | Backend | PP tok/s | TG tok/s | Memory | Date | Entry |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ornith-1.5-35B-A3B | Q4_K_M | 262144 | CUDA | TODO | TODO | ~37 GB of 61 GB (`free -g`) | 2026-10-26 | [entry](models/ornith-1.5-35b-a3b-q4_k_m.md) |
 
 ## llama.cpp build
 
-Not recorded yet.
+Recorded for the Ornith server, from the checkout on the board. CMake flags and the CUDA toolkit version were not captured.
 
-When this is filled in, include the llama.cpp git commit, the CMake flags, `CMAKE_CUDA_ARCHITECTURES=87` (or the equivalent you passed), the JetPack release, the CUDA version, and the power mode the board was in while you built or ran.
+- **Commit:** [`704485942ab54bbbbf1f241b3550ffba35f5f37e`](https://github.com/ggml-org/llama.cpp/commit/704485942ab54bbbbf1f241b3550ffba35f5f37e) (2026-08-11 11:47:57 +0200)
+- **Binary:** `/home/nvidia/src/llama.cpp/build/bin/llama-server`
+- **GPU arch:** `sm_87`
+- **OS:** L4T R36.4.7 (`/etc/nv_tegra_release`: R36 revision 4.7, GCID 42132812, 2025-09-18, `KERNEL_VARIANT: oot`)
+- **Power mode while serving:** `nvpmodel -m 0`, then `jetson_clocks`
 
 ## Server config
 
-Not recorded yet.
-
-When this is filled in, include the `llama-server` launch command and any systemd unit: bind address, port, context (`-c`), GPU layers, flash attention, KV-cache type, and batch sizes. Note the Jetson power mode (`nvpmodel` / `jetson_clocks`) if it was set for the run.
+[`configs/llama-server.service`](configs/llama-server.service) is the unit installed at `/etc/systemd/system/llama-server.service`. It serves Ornith-1.5-35B-A3B Q4_K_M on `0.0.0.0:8080` with context 262144, f16 KV cache, flash attention, and MTP speculative decoding (`--spec-draft-n-max 2`). Flags, the memory reading, and the 29 GB comment mismatch are written up in the [model entry](models/ornith-1.5-35b-a3b-q4_k_m.md).
 
 ## Benchmarks
 
-None recorded yet.
-
-Record prompt-processing tok/s and generation tok/s separately, with the command, the prompt length, the generation length, the context the server loaded, and memory use (`tegrastats` or the equivalent you used). Follow the measurement fields in the [repository conventions](../README.md#conventions).
+No tok/s yet. While the Ornith server was up, `free -g` reported about 37 GB used of 61 GB total, with swap unused. The model entry has the raw `free` output and a `llama-bench` command to fill in the TODO columns. Stop the server before running that bench.
 
 ## Notes and gotchas
 
-None recorded yet.
+- The systemd comment says "29 GB model". The Q4_K_M file in service is 21.86 GB. The comment likely dates from an earlier Q6 model. See the [model entry](models/ornith-1.5-35b-a3b-q4_k_m.md).
+- `jetson_clocks` does not persist across reboot. The unit re-applies `nvpmodel -m 0` and `jetson_clocks` as root before each start.
+- First start uses `TimeoutStartSec=900`.
 
 ## Other runtimes
 
