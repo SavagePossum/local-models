@@ -32,7 +32,7 @@ Folder names are kebab-case: vendor, product, and the memory size or SKU that bo
 
 Open the hardware README and match the OS, driver stack, and backend before trusting a number. Two machines with the same GPU and different system RAM, drivers, or offload settings will not match.
 
-The AGX Orin folder has one serving configuration, [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md), with `llama-bench` numbers from 2026-10-26. The other folders have no entries yet.
+Two folders have measurements from 2026-10-26: [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md) on the AGX Orin, and [Qwen3.8-27B Q4_K_M](amd-rx7900xtx-24gb/models/qwen3.8-27b-q4_k_m.md) on the RX 7900 XTX (two ROCm builds). The Strix Halo and RTX 4090 folders have no entries yet.
 
 ## Reproduce a setup
 
