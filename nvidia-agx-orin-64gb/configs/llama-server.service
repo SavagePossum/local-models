@@ -1,0 +1,49 @@
+[Unit]
+Description=llama.cpp server (Ornith-1.5-35B-A3B)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=nvidia
+Group=nvidia
+Environment=LD_LIBRARY_PATH=/usr/local/cuda/lib64
+
+# Re-apply max clocks after reboot (jetson_clocks does not persist)
+ExecStartPre=+/usr/sbin/nvpmodel -m 0
+ExecStartPre=+/usr/bin/jetson_clocks
+
+ExecStart=/home/nvidia/src/llama.cpp/build/bin/llama-server \
+  --model /mnt/data/models/Ornith-1.5-35B-A3B-Q4_K_M.gguf \
+  --alias ornith-1.5-35b-a3b \
+  --host 0.0.0.0 \
+  --port 8080 \
+  --n-gpu-layers 99 \
+  --ctx-size 262144 \
+  --flash-attn on \
+  --cache-type-k f16 \
+  --cache-type-v f16 \
+  --batch-size 2048 \
+  --ubatch-size 512 \
+  --threads 6 \
+  --parallel 1 \
+  --cache-reuse 256 \
+  --jinja \
+  --reasoning-preserve \
+  --temp 0.6 \
+  --top-p 0.95 \
+  --top-k 20 \
+  --spec-type draft-mtp \
+  --spec-draft-n-max 2 \
+  --metrics
+
+# 29 GB model + 5 GB KV allocation takes a while on first start
+TimeoutStartSec=900
+Restart=on-failure
+RestartSec=15
+LimitMEMLOCK=infinity
+LimitNOFILE=65536
+OOMScoreAdjust=-500
+
+[Install]
+WantedBy=multi-user.target
