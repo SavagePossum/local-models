@@ -32,7 +32,7 @@ Folder names are kebab-case: vendor, product, and the memory size or SKU that bo
 
 Open the hardware README and match the OS, driver stack, and backend before trusting a number. Two machines with the same GPU and different system RAM, drivers, or offload settings will not match.
 
-Two folders have measurements from 2026-10-26: [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md) on the AGX Orin, and [Qwen3.8-27B Q4_K_M](amd-rx7900xtx-24gb/models/qwen3.8-27b-q4_k_m.md) on the RX 7900 XTX (two ROCm builds). The Strix Halo and RTX 4090 folders have no entries yet.
+Entries so far: [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md) on the AGX Orin (2026-10-26), [Qwen3.8-27B Q4_K_M](amd-rx7900xtx-24gb/models/qwen3.8-27b-q4_k_m.md) on the RX 7900 XTX (two ROCm builds, 2026-10-26), and [Ornith-1.5-122B AD-IQ2_S-IQ2_XS](amd-strix-halo-392/models/ornith-1.5-122b-ad-iq2_s-iq2_xs.md) on the Strix Halo (Vulkan, llama.cpp build 12005, 2026-10-30). The RTX 4090 folder has no entries yet.
 
 ## Reproduce a setup
 
