@@ -1,0 +1,34 @@
+# Installed on the laptop as /etc/systemd/system/llama-server.service.
+# Replace USER with the local account. The run recorded here used alex.
+# Replace the two paths if the trees live elsewhere. The recorded paths were:
+#   /home/alex/llama.cpp
+#   /home/alex/models/Ornith-1.5-122B-AD-IQ2_S-IQ2_XS.gguf
+# The account's service process needs the render and video groups to open the
+# Vulkan device. SupplementaryGroups below does that for this unit.
+
+[Unit]
+Description=llama.cpp server - Ornith-1.5-122B IQ2_S (Vulkan, 128K)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=USER
+Group=USER
+SupplementaryGroups=render video
+WorkingDirectory=/home/USER/llama.cpp
+ExecStart=/home/USER/llama.cpp/build/bin/llama-server \
+  -m /home/USER/models/Ornith-1.5-122B-AD-IQ2_S-IQ2_XS.gguf \
+  -c 131072 -ngl 99 -fa on -lm none \
+  -ctk q8_0 -ctv q8_0 \
+  -b 2048 -ub 512 --parallel 1 --cache-reuse 256 \
+  --jinja --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 \
+  --metrics --host 0.0.0.0 --port 8080 \
+  --spec-type draft-mtp --spec-draft-n-max 2
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=600
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
