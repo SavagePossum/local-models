@@ -1,0 +1,32 @@
+# Installed on the Fedora desktop as /etc/systemd/system/llama-server.service.
+# Binary path recorded: /opt/llama.cpp/bin/llama-server
+# Model path recorded: /home/alex/models/Qwen3.8-Flash-Next-GGUF/UD-IQ2_XS/...
+# SupplementaryGroups=video render is how the service opens the AMD GPU device.
+
+[Unit]
+Description=llama.cpp server (Qwen3.8-Flash-Next UD-IQ2_XS)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=alex
+SupplementaryGroups=video render
+ExecStart=/opt/llama.cpp/bin/llama-server \
+  -m /home/alex/models/Qwen3.8-Flash-Next-GGUF/UD-IQ2_XS/Qwen3.8-Flash-Next-UD-IQ2_XS-00001-of-00003.gguf \
+  --alias qwen3.8-flash-next \
+  --host 0.0.0.0 --port 8080 \
+  -c 131072 --parallel 1 -fa on \
+  --fit on --fit-target 2048 \
+  --load-mode mmap \
+  --override-tensor per_layer_token_embd=CPU \
+  --n-cpu-moe 30 \
+  --jinja \
+  --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 \
+  --threads-http 8 \
+  --no-reasoning-preserve
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
