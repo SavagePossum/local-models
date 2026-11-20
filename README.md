@@ -29,10 +29,11 @@ Folder names are kebab-case: vendor, product, and the memory size or SKU that bo
 | [`nvidia-agx-orin-64gb`](nvidia-agx-orin-64gb/README.md) | NVIDIA Jetson AGX Orin, dedicated model host | 64GB unified | L4T R36.4.7 | CUDA (`sm_87`) |
 | [`amd-strix-halo-392`](amd-strix-halo-392/README.md) | Lenovo Legion 7a, Ryzen AI Max+ 392, Radeon 8060S | 64GB unified LPDDR5X | Omarchy Linux | Vulkan, ROCm (`gfx1151`) |
 | [`nvidia-rtx4090-24gb`](nvidia-rtx4090-24gb/README.md) | NVIDIA GeForce RTX 4090 | 24GB GDDR6X, 64GB system RAM | Ubuntu | CUDA (`sm_89`) |
+| [`nvidia-rtx4090-24gb-128gb`](nvidia-rtx4090-24gb-128gb/README.md) | NVIDIA GeForce RTX 4090 on Ubuntu desktop `AMD9900-ML-ubuntu` | 24GB GDDR6X, 128GB system RAM | Ubuntu | CUDA (`sm_89`) |
 
 Open the hardware README and match the OS, driver stack, and backend before trusting a number. Two machines with the same GPU and different system RAM, drivers, or offload settings will not match.
 
-Entries so far: [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md) on the AGX Orin (2026-10-26), [Qwen3.8-27B Q4_K_M](amd-rx7900xtx-24gb/models/qwen3.8-27b-q4_k_m.md) on the RX 7900 XTX (two ROCm builds, 2026-10-26), and [Ornith-1.5-122B AD-IQ2_S-IQ2_XS](amd-strix-halo-392/models/ornith-1.5-122b-ad-iq2_s-iq2_xs.md) on the Strix Halo (Vulkan, llama.cpp build 12005, 2026-10-30). The RTX 4090 folder has no entries yet.
+Entries so far: [Ornith-1.5-35B-A3B Q4_K_M](nvidia-agx-orin-64gb/models/ornith-1.5-35b-a3b-q4_k_m.md) on the AGX Orin (2026-10-26), [Qwen3.8-27B Q4_K_M](amd-rx7900xtx-24gb/models/qwen3.8-27b-q4_k_m.md) on the RX 7900 XTX (two ROCm builds, 2026-10-26), [Ornith-1.5-122B AD-IQ2_S-IQ2_XS](amd-strix-halo-392/models/ornith-1.5-122b-ad-iq2_s-iq2_xs.md) on the Strix Halo (Vulkan, llama.cpp build 12005, 2026-10-30), and [Qwen3.8-Flash-Next UD-IQ4_XS](nvidia-rtx4090-24gb-128gb/models/qwen3.8-flash-next-ud-iq4_xs.md) on the RTX 4090 desktop with 128GB system RAM (CUDA, llama.cpp `b12557`, 2026-11-20). The [64GB RTX 4090 folder](nvidia-rtx4090-24gb/README.md) has no entries yet.
 
 ## Reproduce a setup
 
@@ -56,7 +57,7 @@ TEMPLATE.md                # copy-paste form for one model + quant + runtime
 
 Server unit files, launch scripts, and pasted benchmark logs can live next to the hardware README once they exist. Link them from that README. Keep secrets out of committed units (tokens, Tailscale auth keys, private hostnames you do not want published).
 
-Suggested hardware-folder names stay specific enough to search for: `amd-rx7900xtx-24gb`, `nvidia-agx-orin-64gb`, `amd-strix-halo-392`, `nvidia-rtx4090-24gb`. A new device gets a new folder. A different memory configuration of the same GPU gets its own folder when the difference changes which models fit.
+Suggested hardware-folder names stay specific enough to search for: `amd-rx7900xtx-24gb`, `nvidia-agx-orin-64gb`, `amd-strix-halo-392`, `nvidia-rtx4090-24gb`, `nvidia-rtx4090-24gb-128gb`. A new device gets a new folder. A different memory configuration of the same GPU gets its own folder when the difference changes which models fit.
 
 ## What a hardware README contains
 

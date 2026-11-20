@@ -1,0 +1,18 @@
+# Installed on AMD9900-ML-ubuntu as /etc/systemd/system/llama-server-flashnext.service.
+# Recorded keys are User, Environment, ExecStart, and TimeoutStartSec.
+# Type, Group, Restart, and [Install] were not recorded.
+
+[Service]
+User=ubuntu
+Environment="CUDA_VISIBLE_DEVICES=0"
+ExecStart=/home/ubuntu/llama.cpp-flashnext/build/bin/llama-server \
+  --model /home/ubuntu/llama.cpp/models/Qwen3.8-Flash-Next-GGUF/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00004.gguf \
+  --alias qwen3.8-flash-next \
+  --host 0.0.0.0 --port 8080 \
+  --n-gpu-layers 99 --cpu-moe --moe-cache-mib 9000 \
+  --ctx-size 262144 --flash-attn on \
+  --cache-type-k q8_0 --cache-type-v q8_0 \
+  --batch-size 2048 --ubatch-size 512 --threads 16 --parallel 1 \
+  --jinja --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 \
+  --metrics
+TimeoutStartSec=600
