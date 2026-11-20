@@ -2,7 +2,9 @@
 
 NVIDIA GeForce RTX 4090 with 24GB GDDR6X on an Ubuntu machine with 64GB of system RAM. The GPU is Ada Lovelace, CUDA compute capability 8.9 (`sm_89`). The Ubuntu release, NVIDIA driver, and CUDA toolkit version have not been recorded yet.
 
-No models, builds, server configs, or benchmark numbers have been recorded yet.
+No models, builds, server configs, or benchmark numbers have been recorded on this 64GB host yet.
+
+The same GPU with 128GB of system RAM is a different machine, [`nvidia-rtx4090-24gb-128gb`](../nvidia-rtx4090-24gb-128gb/README.md) (`AMD9900-ML-ubuntu`). Its [Qwen3.8-Flash-Next UD-IQ4_XS](../nvidia-rtx4090-24gb-128gb/models/qwen3.8-flash-next-ud-iq4_xs.md) entry was measured there. This page stays the 64GB host.
 
 ## Hardware
 
